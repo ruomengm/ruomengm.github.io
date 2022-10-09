@@ -4,6 +4,56 @@
   
     
     <entry>
+      <title>EXISTS与IN的区别</title>
+      <link href="/post/23206.html"/>
+      <url>/post/23206.html</url>
+      
+        <content type="html"><![CDATA[<ul><li><font color="red">如果查询的两个表大小相当，那么用 EXISTS 和 IN 差别不大</font></li><li><font color="red">如果两个表中一个较小表，一个较大表，则子查询表大的用 EXISTS，子查询表小的用 IN</font></li></ul><p>假设 表 t1 为小表，表 t2 为大表（id有索引）</p><p>  子查询为表t2</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t1 <span class="keyword">where</span> id <span class="keyword">in</span> (<span class="keyword">select</span> id <span class="keyword">from</span> t2)  </span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>效率低，用到了 t1 表上 id 列的索引；   </span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t1 <span class="keyword">where</span> <span class="keyword">exists</span>(<span class="keyword">select</span> id <span class="keyword">from</span> t2 <span class="keyword">where</span> id<span class="operator">=</span>t1.id)  </span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>效率高，用到了 t2 表上 id 列的索引。</span><br></pre></td></tr></table></figure><p>  子查询为表t1</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t2 <span class="keyword">where</span> id <span class="keyword">in</span> (<span class="keyword">select</span> id <span class="keyword">from</span> t1)  </span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>效率高，用到了t2 表上 id 列的索引；   </span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t2 <span class="keyword">where</span> <span class="keyword">exists</span>(<span class="keyword">select</span> id <span class="keyword">from</span> t1 <span class="keyword">where</span> id<span class="operator">=</span>t2.id)  </span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>效率低，用到了 t1 表上 id 列的索引。</span><br></pre></td></tr></table></figure><ul><li><font color="red">无论哪个表大，用 NOT EXISTS 都比 NOT IN 要快</font></li></ul><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t2 <span class="keyword">where</span> id <span class="keyword">not</span> <span class="keyword">in</span> (<span class="keyword">select</span> id <span class="keyword">from</span> t1) </span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>效率低，内外表都进行全表扫描，不能用到索引；</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t2 <span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span>(<span class="keyword">select</span> id <span class="keyword">from</span> t1 <span class="keyword">where</span> id<span class="operator">=</span>t2.id)</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>效率高，用到了 t1 表上 id 列的索引。</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> MySQL </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MySQL的EXISTS与IN </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>乐观锁与悲观锁</title>
+      <link href="/post/56547.html"/>
+      <url>/post/56547.html</url>
+      
+        <content type="html"><![CDATA[<ul><li><font color='red'>乐观锁</font>：比较适合<font color='red'>读取</font>操作比较频繁的场景，如果出现大量的写入操作，数据发生冲突的可能性就会增大，为了保证数据的一致性，应用层需要不断的重新获取数据，这样会增加大量的查询操作，降低了系统的吞吐量。</li><li><font color='red'>悲观锁</font>：比较适合<font color='red'>写入</font>操作比较频繁的场景，如果出现大量的读取操作，每次读取的时候都会进行加锁，这样会增加大量的锁的开销，降低了系统的吞吐量。</li></ul><p><font color='red'>注意</font>：</p><p>​使用悲观锁，需要关闭mysql的自动提交功能，将 set autocommit &#x3D; 0;</p><p>​mysql中的行级锁是基于索引的，如果sql没有走索引，那将使用表级锁把整张表锁住</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> MySQL </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MySQL锁 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Java线程</title>
       <link href="/post/38563.html"/>
       <url>/post/38563.html</url>
@@ -33,7 +83,7 @@
       <link href="/post/16107.html"/>
       <url>/post/16107.html</url>
       
-        <content type="html"><![CDATA[<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><h3 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h3><h3 id="TreeMap"><a href="#TreeMap" class="headerlink" title="TreeMap"></a>TreeMap</h3><h3 id="Hashtable"><a href="#Hashtable" class="headerlink" title="Hashtable"></a>Hashtable</h3><h2 id="Collection"><a href="#Collection" class="headerlink" title="Collection"></a>Collection</h2><h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><h3 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h3>]]></content>
+        <content type="html"><![CDATA[<p><img src="E:\blog\themes\butterfly\source\img\collection.jpg" alt="image-20220928173053461"></p><h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><h4 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h4><h4 id="TreeMap"><a href="#TreeMap" class="headerlink" title="TreeMap"></a>TreeMap</h4><h4 id="Hashtable"><a href="#Hashtable" class="headerlink" title="Hashtable"></a>Hashtable</h4><h2 id="Collection"><a href="#Collection" class="headerlink" title="Collection"></a>Collection</h2><h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><h3 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h3>]]></content>
       
       
       <categories>
