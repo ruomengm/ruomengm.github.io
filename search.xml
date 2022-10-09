@@ -45,7 +45,7 @@
       
         <tags>
             
-            <tag> MySQL的EXISTS与IN </tag>
+            <tag> EXISTS与IN区别 </tag>
             
         </tags>
       
@@ -70,7 +70,7 @@
       
         <tags>
             
-            <tag> MySQL锁 </tag>
+            <tag> 乐观锁与悲观锁 </tag>
             
         </tags>
       
